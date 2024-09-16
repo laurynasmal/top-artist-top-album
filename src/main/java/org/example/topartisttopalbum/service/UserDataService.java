@@ -53,7 +53,6 @@ public class UserDataService {
     private Mono<ItunesResp> processArtistResultExecution(String userId, ItunesResp result) {
         return usersRepo.findByUserId(userId)
                 .switchIfEmpty(Mono.defer(() -> usersRepo.save(new Users(null, userId, null))))
-                .then(redisCacheService.decrementItunesApiCalls())
                 .then(redisCacheService.storeLastUserArtistSearch(userId, serializeResult(result)))
                 .thenReturn(result);
     }
